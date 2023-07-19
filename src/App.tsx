@@ -1,17 +1,15 @@
-import {
+import react, {
   AudioHTMLAttributes,
   DetailedHTMLProps,
   useEffect,
   useRef,
   useState,
 } from "react";
-import { Slider, RangeSlider } from "@mantine/core";
-import AudioExample from "./assets/rick.mp3";
+import { Slider } from "@mantine/core";
 
-type AudioElement = DetailedHTMLProps<
-  AudioHTMLAttributes<HTMLAudioElement>,
-  HTMLAudioElement
->;
+import TrackOne from "./assets/track-01.mp3";
+import TrackTwo from "./assets/track-02.mp3";
+import TrackThree from "./assets/track-03.mp3";
 
 const secToTimeStamp = (timeImSec: number | null | undefined): string => {
   if (!timeImSec) return "0:00";
@@ -31,11 +29,25 @@ const secToTimeStamp = (timeImSec: number | null | undefined): string => {
   }`;
 };
 
+function getTrack(trackNo: number): string {
+  switch (trackNo) {
+    case 1:
+      return TrackOne;
+    case 2:
+      return TrackTwo;
+    case 3:
+      return TrackThree;
+    default:
+      return TrackOne;
+  }
+}
+
 function App() {
   const audioRef = useRef<HTMLAudioElement>(null!);
 
   const [currentSec, setCurrentSec] = useState<number>(0);
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState<number>(0);
+  const [trackNumber, setTrackNumber] = useState<number>(1);
 
   const handleUpdate = () => {
     const currentTime = audioRef.current.currentTime;
@@ -74,12 +86,13 @@ function App() {
         <Slider
           value={Math.round(progress * 100) / 100}
           onChange={(event) => {
-            const duration = audioRef.current.duration
-            const currentSecFromProgress = (event * duration) / 100
-            audioRef.current.currentTime = currentSecFromProgress
+            const duration = audioRef.current.duration;
+            const currentSecFromProgress = (event * duration) / 100;
+            audioRef.current.currentTime = currentSecFromProgress;
           }}
         />
-        <audio src={AudioExample} ref={audioRef} />
+        <h2>{`Playing Track: ${getTrack(trackNumber)}`}</h2>
+        <audio src={getTrack(trackNumber)} ref={audioRef} />
         <button
           onClick={() => {
             handlePlay()
@@ -91,6 +104,30 @@ function App() {
         </button>
         <button onClick={handlePause}>Pause</button>
         <button onClick={handleRestart}>Restart</button>
+        <button
+          onClick={() => {
+            setTrackNumber((prev) => {
+              prev = prev - 1;
+              if (prev > 3) return 1;
+              if (prev < 1) return 3;
+              return prev;
+            });
+          }}
+        >
+          {"<"}
+        </button>
+        <button
+          onClick={() => {
+            setTrackNumber((prev) => {
+              prev = prev + 1;
+              if (prev > 3) return 1;
+              if (prev < 1) return 3;
+              return prev;
+            });
+          }}
+        >
+          {">"}
+        </button>
       </div>
     </>
   );
