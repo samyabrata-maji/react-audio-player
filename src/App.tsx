@@ -44,7 +44,9 @@ function getTrack(trackNo: number): string {
 
 function App() {
   const audioRef = useRef<HTMLAudioElement>(null!);
-
+  
+  // @here
+  // const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentSec, setCurrentSec] = useState<number>(0);
   const [progress, setProgress] = useState<number>(0);
   const [trackNumber, setTrackNumber] = useState<number>(1);
@@ -70,6 +72,7 @@ function App() {
   }
 
   function handlePause() {
+    setIsPlaying(prev => !prev)
     audioRef.current.pause();
   }
 
@@ -84,29 +87,39 @@ function App() {
           audioRef?.current?.duration,
         )}`}</h2>
         <Slider
-          value={Math.round(progress * 100) / 100}
+          value={Math.round(progress * 100) / 100 || 0}
           onChange={(event) => {
             const duration = audioRef.current.duration;
             const currentSecFromProgress = (event * duration) / 100;
+
+            // @here
+            // if (Number.isNaN(audioRef.current.currentTime)) {
+            //   audioRef.current.currentTime = 0
+            // }
             audioRef.current.currentTime = currentSecFromProgress;
           }}
         />
         <h2>{`Playing Track: ${getTrack(trackNumber)}`}</h2>
         <audio src={getTrack(trackNumber)} ref={audioRef} />
-        <button
+        {!isPlaying && <button
           onClick={() => {
+            setIsPlaying(prev => !prev)
             handlePlay()
               .then(() => console.log("play"))
               .catch(() => console.log("error"));
           }}
         >
           Start
-        </button>
-        <button onClick={handlePause}>Pause</button>
+        </button>}
+        {isPlaying && <button onClick={handlePause}>Pause</button>}
         <button onClick={handleRestart}>Restart</button>
         <button
           onClick={() => {
             setTrackNumber((prev) => {
+              
+              // @here
+              // setIsPlaying(false)
+              
               prev = prev - 1;
               if (prev > 3) return 1;
               if (prev < 1) return 3;
@@ -119,6 +132,8 @@ function App() {
         <button
           onClick={() => {
             setTrackNumber((prev) => {
+              // @here
+              // setIsPlaying(false)
               prev = prev + 1;
               if (prev > 3) return 1;
               if (prev < 1) return 3;
