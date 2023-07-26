@@ -141,6 +141,12 @@ function App() {
         >
           {">"}
         </button>
+        <Slider
+          value={(typeof audioRef?.current?.volume === "undefined" || Number.isNaN(audioRef?.current?.volume))? 100 : audioRef.current.volume * 100}
+          onChange={(event) => {
+            audioRef.current.volume = event/100
+          }}
+        />
       </div>
     </>
   );
