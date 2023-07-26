@@ -45,8 +45,7 @@ function getTrack(trackNo: number): string {
 function App() {
   const audioRef = useRef<HTMLAudioElement>(null!);
   
-  // @here
-  // const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentSec, setCurrentSec] = useState<number>(0);
   const [progress, setProgress] = useState<number>(0);
   const [trackNumber, setTrackNumber] = useState<number>(1);
@@ -92,10 +91,9 @@ function App() {
             const duration = audioRef.current.duration;
             const currentSecFromProgress = (event * duration) / 100;
 
-            // @here
-            // if (Number.isNaN(audioRef.current.currentTime)) {
-            //   audioRef.current.currentTime = 0
-            // }
+            if (Number.isNaN(audioRef.current.currentTime)) {
+              audioRef.current.currentTime = 0
+            }
             audioRef.current.currentTime = currentSecFromProgress;
           }}
         />
